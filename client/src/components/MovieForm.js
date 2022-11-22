@@ -13,18 +13,24 @@ function MovieForm() {
     discount: false,
     female_director: false,
   });
+  const [errors, setErrors] = useState([]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    fetch("/movies", {
+    const response = await fetch("/movies", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((newMovie) => console.log(newMovie));
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log("Movie created:", data);
+    } else {
+      setErrors(data.errors);
+    }
   }
 
   function handleChange(e) {
@@ -40,7 +46,7 @@ function MovieForm() {
     <Wrapper>
       <form onSubmit={handleSubmit}>
         <FormGroup>
-          <label htmlFor="title">Title</label>
+          <label htmlFor="title"> Title </label>
           <input
             type="text"
             id="title"
@@ -49,7 +55,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="year">Year</label>
+          <label htmlFor="year"> Year </label>
           <input
             type="number"
             id="year"
@@ -60,7 +66,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="length">Length</label>
+          <label htmlFor="length"> Length </label>
           <input
             type="number"
             id="length"
@@ -69,7 +75,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="director">Director</label>
+          <label htmlFor="director"> Director </label>
           <input
             type="text"
             id="director"
@@ -78,7 +84,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description"> Description </label>
           <textarea
             id="description"
             value={formData.description}
@@ -86,7 +92,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="poster_url">Poster</label>
+          <label htmlFor="poster_url"> Poster </label>
           <input
             type="text"
             id="poster_url"
@@ -95,7 +101,7 @@ function MovieForm() {
           />
         </FormGroup>
         <FormGroup>
-          <label htmlFor="category">Category</label>
+          <label htmlFor="category"> Category </label>
           <input
             type="text"
             id="category"
@@ -105,7 +111,7 @@ function MovieForm() {
         </FormGroup>
         <FormGroup>
           <label htmlFor="discount">
-            Discount?
+            Discount ?
             <input
               type="checkbox"
               id="discount"
@@ -116,7 +122,7 @@ function MovieForm() {
         </FormGroup>
         <FormGroup>
           <label htmlFor="female_director">
-            Female Director?
+            Female Director ?
             <input
               type="checkbox"
               id="female_director"
@@ -125,7 +131,14 @@ function MovieForm() {
             />
           </label>
         </FormGroup>
-        <SubmitButton type="submit">Add Movie</SubmitButton>
+        {errors.length > 0 && (
+          <ul style={{ color: "red" }}>
+            {errors.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        )}
+        <SubmitButton type="submit"> Add Movie </SubmitButton>
       </form>
     </Wrapper>
   );
